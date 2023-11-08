@@ -82,15 +82,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "torc_lexer"
+name = "torc"
 version = "0.1.0"
 dependencies = [
  "logos",
 ]
-
-[[package]]
-name = "torc_parser"
-version = "0.1.0"
 
 [[package]]
 name = "unicode-ident"
