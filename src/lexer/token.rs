@@ -1,87 +1,217 @@
+use core::fmt;
 use logos::Logos;
 
 #[derive(Logos, Debug, PartialEq, Eq)]
 enum Token {
-    // Mathematical
-    #[token("*")]
-    Multiply,
-    #[token("+")]
-    Add,
-    #[token("-")]
-    Minus,
-    #[token("/")]
-    Divide,
-    #[token("^")]
-    Pow,
-    // General
+    // Programmatic
     #[token("=")]
     Equals,
+
+    // Mathematical
+    #[token("+")]
+    Plus,
+    #[token("-")]
+    Hyphen,
+    #[token("*")]
+    Asterisk,
+    #[token("/")]
+    Solidus,
+    #[token(r"\")]
+    ReverseSolidus,
+    #[token("^")]
+    Circumflex,
+
+    // Boolean
+    #[token("==")]
+    LogicalEquals,
+    #[token("!=")]
+    LogicalNotEquals,
+    #[token("<")]
+    LogicalLessThan,
+    #[token(">")]
+    LogicalGreaterThan,
+    #[token("<=")]
+    LogicalLessThanOrEquals,
+    #[token(">=")]
+    LogicalGreaterThanOrEquals,
+    #[token("&&")]
+    LogicalAnd,
+    #[token("||")]
+    LogicalOr,
+    
+    // Punctuation
     #[token(".")]
     Period,
+    #[token(",")]
+    Comma,
     #[token(":")]
     Colon,
     #[token(";")]
     SemiColon,
-    #[token(",")]
-    Comma,
     #[token("_")]
     Underscore,
-    // Boolean
-    #[token("&&")]
-    And,
-    #[token("||")]
-    Or,
-    #[token("==")]
-    Eq,
-    #[token("!=")]
-    Neq,
-    #[token("<=")]
-    Leq,
-    #[token(">=")]
-    Geq,
-    // Brackets
-    #[token("<")]
-    LAngle,
-    #[token(">")]
-    RAngle,
+        
+    // Bracket Delimiters
     #[token("(")]
-    LParen,
+    LeftParenthesis,
     #[token(")")]
-    RParen,
-    #[token("[")]
-    LSquare,
-    #[token("]")]
-    RSquare,
+    RightParenthesis,
     #[token("{")]
-    LBrace,
+    LeftCurlyBracket,
     #[token("}")]
-    RBrace,
-    // Constructs
+    RightCurlyBracket,
+    #[token("[")]
+    LeftSquareBracket,
+    #[token("]")]
+    RightSquareBracket,
+
+    // Data types
+    #[regex(r#"\d+"#, priority = 2)]
+    Integer,
     #[regex(r#""((\\"|\\\\)|[^\\"])*""#)]
     String,
-    #[regex(r#"//[^\n]*\n"#)]
-    LineComment,
-    #[regex(r#"\d+"#, priority = 2)]
-    Int,
     #[regex(r#"((\d+(\.\d+)?)|(\.\d+))([Ee](\+|-)?\d+)?"#)]
     Float,
+
     #[regex(r#"[A-Za-z]([A-Za-z]|_|\d)*"#)]
-    Ident,
+    Identifier,
 
-    // Keywords
-    #[token("let")]
-    KwLet,
-    #[token("if")]
-    KwIf,
-    #[token("else")]
-    KwElse,
-    #[token("fn")]
-    KwFn,
-    #[token("struct")]
-    KwStruct,
-
+    // Misc
     #[regex(r"[ \t\r\n\f]+")]
-    WS
+    Whitespace,
+}
+
+#[macro_export]
+macro_rules! T {
+    [=] => { Token::Equals };
+
+    [+] => { Token::Plus };
+    [-] => { Token::Hyphen };
+    [*] => { Token::Asterisk };
+    [/] => { Token::Solidus };
+    [r"\"] => { Token::ReverseSolidus };
+    [^] => { Token::Circumflex };
+    
+    [==] => { Token::LogicalEquals };
+    [!=] => { Token::LogicalNotEquals };
+    [<] => { Token::LogicalLessThan };
+    [>] => { Token::LogicalGreaterThan };
+    [<=] => { Token::LogicalLessThanOrEquals };
+    [>=] => { Token::LogicalGreaterThanOrEquals };
+    [&&] => { Token::LogicalAnd };
+    [||] => { Token::LogicalOr };
+
+    [.] => { Token::Period };
+    [,] => { Token::Comma };
+    [:] => { Token::Colon };
+    [;] => { Token::SemiColon };
+    [_] => { Token::Underscore };
+
+    ['('] => { Token::LeftParenthesis };
+    [')'] => { Token::RightParenthesis };
+    ['{'] => { Token::LeftCurlyBracket };
+    ['}'] => { Token::RightCurlyBracket };
+    ['['] => { Token::LeftSquareBracket };
+    [']'] => { Token::RightSquareBracket };
+    
+    [int] => { Token::Integer };
+    [string] => { Token::String };
+    [float] => { Token::Float };
+    [ident] => { Token::Identifier };
+
+    [ws] => { Token::Whitespace };
+}
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                T![=] => "=",
+
+                T![+] => "+",
+                T![-] => "-",
+                T![*] => "*",
+                T![/] => "/",
+                T![r"\"] => r"\",
+                T![^] => "^",
+                
+                T![==] => "==",
+                T![!=] => "!=",
+                T![<] => "<",
+                T![>] => ">",
+                T![<=] => "<=",
+                T![>=] => ">=",
+                T![&&] => "&&",
+                T![||] => "||",
+                
+                T![.] => ".",
+                T![,] => ",",
+                T![:] => ":",
+                T![;] => ";",
+                T![_] => "_",
+
+                T!['('] => "(",
+                T![')'] => ")",
+                T!['{'] => "{",
+                T!['}'] => "}",
+                T!['['] => "[",
+                T![']'] => "]",
+                    
+                T![int] => "Integer",
+                T![string] => "String",
+                T![float] => "Float",
+                T![ident] => "Identifier",
+                
+                T![ws] => "<Whitespace>",
+            }
+        )
+    }
 }
 
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn token_display() {
+        assert_eq!(T![=].to_string(), "=");
+        
+        assert_eq!(T![+].to_string(), "+");
+        assert_eq!(T![-].to_string(), "-");
+        assert_eq!(T![*].to_string(), "*");
+        assert_eq!(T![/].to_string(), "/");
+        assert_eq!(T![r"\"].to_string(), r"\");
+        assert_eq!(T![^].to_string(), "^");
+
+        assert_eq!(T![==].to_string(), "==");
+        assert_eq!(T![!=].to_string(), "!=");
+        assert_eq!(T![<].to_string(), "<");
+        assert_eq!(T![>].to_string(), ">");
+        assert_eq!(T![<=].to_string(), "<=");
+        assert_eq!(T![&&].to_string(), "&&");
+        assert_eq!(T![||].to_string(), "||");
+
+        assert_eq!(T![.].to_string(), ".");
+        assert_eq!(T![,].to_string(), ",");
+        assert_eq!(T![:].to_string(), ":");
+        assert_eq!(T![;].to_string(), ";");
+        assert_eq!(T![_].to_string(), "_");
+        
+        assert_eq!(T!['('].to_string(), "(");
+        assert_eq!(T![')'].to_string(), ")");
+        assert_eq!(T!['{'].to_string(), "{");
+        assert_eq!(T!['}'].to_string(), "}");
+        assert_eq!(T!['['].to_string(), "[");
+        assert_eq!(T![']'].to_string(), "]");
+        
+        assert_eq!(T![int].to_string(), "Integer");
+        assert_eq!(T![string].to_string(), "String");
+        assert_eq!(T![float].to_string(), "Float");
+        assert_eq!(T![ident].to_string(), "Identifier");
+        
+        assert_eq!(T![ws].to_string(), "<Whitespace>");
+   }
+}
