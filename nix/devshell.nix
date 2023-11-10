@@ -6,16 +6,12 @@
       inputsFrom = [
         config.treefmt.build.devShell
       ];
-      shellHook = ''
-        export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
-      '';
+      # shellHook = ''
+      #   export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
+      # '';
       buildInputs = with pkgs; [ libiconv ];
       nativeBuildInputs = with pkgs; [
-        just
-        rustc
-        cargo
-        cargo-watch
-        rust-analyzer
+        rust-bin.stable.latest.complete
       ];
     };
   };
